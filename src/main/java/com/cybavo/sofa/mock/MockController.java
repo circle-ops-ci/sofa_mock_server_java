@@ -14,10 +14,12 @@ import com.cybavo.sofa.api.GetDepositWalletAddresses;
 import com.cybavo.sofa.api.GetDepositWalletPoolAddress;
 import com.cybavo.sofa.api.GetInvalidDepositAddresses;
 import com.cybavo.sofa.api.GetNotifications;
+import com.cybavo.sofa.api.GetNotificationsById;
 import com.cybavo.sofa.api.GetTransactionHistory;
 import com.cybavo.sofa.api.GetTxAPITokenStatus;
 import com.cybavo.sofa.api.GetWalletBlockInfo;
 import com.cybavo.sofa.api.GetWalletInfo;
+import com.cybavo.sofa.api.GetWithdrawTransactionState;
 import com.cybavo.sofa.api.SetApiTokenRequest;
 import com.cybavo.sofa.api.VerifyAddresses;
 import com.cybavo.sofa.api.WithdrawTransaction;
@@ -27,9 +29,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -56,12 +56,7 @@ public class MockController {
 		ApiToken newToken = new ApiToken(walletId, request.getApiCode(), request.getApiSecret());
 		repository.save(newToken);
 
-		final HttpHeaders httpHeaders = new HttpHeaders();
-		httpHeaders.setContentType(MediaType.APPLICATION_JSON);
-
-		logger.info("ggg setAPIToken " + request.toString());
-		
-		return new ResponseEntity<>(new CommonResponse(1L), httpHeaders, HttpStatus.OK);
+		return new ResponseEntity<>(new CommonResponse(1L), HttpStatus.OK);
 	}
 
 	@PostMapping("/v1/mock/wallets/{walletId}/addresses")
@@ -152,6 +147,16 @@ public class MockController {
 				response.getStatus());
 	}
 
+	@GetMapping("/v1/mock/wallets/{walletId}/sender/transactions/{orderId}")
+	public HttpEntity<BaseResponse> getWithdrawTransactionState(@PathVariable("walletId") long walletId, 
+			@PathVariable("orderId") String orderId) {
+		Api.Response response = apiClient.makeRequest(walletId, "GET",
+				String.format("/v1/sofa/wallets/%d/sender/transactions/%s", walletId, orderId), null, null);
+
+		return new ResponseEntity<BaseResponse>(response.deserialize(GetWithdrawTransactionState.Response.class),
+				response.getStatus());
+	}
+
 	@GetMapping("/v1/mock/wallets/{walletId}/apisecret")
 	public HttpEntity<BaseResponse> getTxAPITokenStatus(@PathVariable("walletId") long walletId) {
 		Api.Response response = apiClient.makeRequest(walletId, "GET",
@@ -173,6 +178,17 @@ public class MockController {
 				null);
 
 		return new ResponseEntity<BaseResponse>(response.deserialize(GetNotifications.Response.class),
+				response.getStatus());
+	}
+
+	@PostMapping("/v1/mock/wallets/{walletId}/notifications/get_by_id")
+	public HttpEntity<BaseResponse> getNotificationsById(@PathVariable("walletId") Long walletId,
+			@RequestBody GetNotificationsById.Request request) {
+
+		Api.Response response = apiClient.makeRequest(walletId, "POST",
+				String.format("/v1/sofa/wallets/%d/notifications/get_by_id", walletId), null, request);
+
+		return new ResponseEntity<BaseResponse>(response.deserialize(GetNotificationsById.Response.class),
 				response.getStatus());
 	}
 

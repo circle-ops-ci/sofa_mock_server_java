@@ -2,6 +2,8 @@ package com.cybavo.sofa.api;
 
 import java.util.Map;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class WithdrawTransaction {
@@ -27,6 +29,14 @@ public class WithdrawTransaction {
 
             @JsonProperty("message")
             String message;
+
+            @JsonProperty("block_average_fee")
+            @JsonInclude(Include.NON_NULL)
+            Integer blockAverageFee;
+
+            @JsonProperty("manual_fee")
+            @JsonInclude(Include.NON_NULL)
+            Integer manualFee;
         }
     }
 

@@ -5,7 +5,9 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 public class CreateReceiveWalletAddresses {
     public static class Request {
         @JsonProperty("count")
-        private int count;
+        int count;
+        @JsonProperty("memos")
+        String[] memos;
     }
 
     public static class Response extends BaseResponse {

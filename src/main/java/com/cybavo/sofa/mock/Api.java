@@ -20,6 +20,7 @@ import java.util.logging.Logger;
 import com.cybavo.sofa.api.BaseResponse;
 import com.cybavo.sofa.mock.entity.ApiToken;
 import com.cybavo.sofa.mock.repository.ApiTokenRepository;
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -189,6 +190,7 @@ public class Api {
     }
 
     public static class Response {
+        private static Logger logger = Logger.getLogger(Api.Response.class.getName());
         private final HttpStatus status;
         private final String content;
 
@@ -212,8 +214,10 @@ public class Api {
             }
             try {
                 final ObjectMapper mapper = new ObjectMapper();
+                mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
                 return mapper.readValue(text, valueType);
             } catch (Exception e) {
+                logger.warning(String.format("Api.Response deserialize failed %s", e.toString()));
                 return null;
             }
         }

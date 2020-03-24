@@ -14,6 +14,10 @@ public class GetTxAPITokenStatus {
         @JsonProperty("inactivated")
         private WalletApiCode inactivated;
 
+        @JsonInclude(Include.NON_NULL)
+        @JsonProperty("invalid")
+        private WalletApiCode invalid;
+
         public static class WalletApiCode {
             @JsonProperty("api_code")
             private String apiCode;
