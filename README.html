@@ -789,6 +789,10 @@ kbd {
 
 <blockquote>
 <p>Wallet ID must be a withdraw wallet&#39;s ID</p>
+
+<p>order_id must be prefixed. The prefix is 888888_ in following sample request.</p>
+
+<p><strong>Find prefix from corresponding wallet detail on web console UI.</strong></p>
 </blockquote>
 
 <ul>
@@ -808,7 +812,7 @@ kbd {
 <div><pre><code class="language-javascript">{
   &quot;requests&quot;: [
     {
-      &quot;order_id&quot;: &quot;1&quot;,
+      &quot;order_id&quot;: &quot;888888_1&quot;,
       &quot;address&quot;: &quot;0x60589A749AAC632e9A830c8aBE042D1899d8Dd15&quot;,
       &quot;amount&quot;: &quot;0.0001&quot;,
       &quot;memo&quot;: &quot;memo-001&quot;,
@@ -817,13 +821,21 @@ kbd {
       &quot;block_average_fee&quot;: 5
     },
     {
-      &quot;order_id&quot;: &quot;2&quot;,
+      &quot;order_id&quot;: &quot;888888_2&quot;,
       &quot;address&quot;: &quot;0xf16B7B8900F0d2f682e0FFe207a553F52B6C7015&quot;,
       &quot;amount&quot;: &quot;0.0002&quot;,
       &quot;memo&quot;: &quot;memo-002&quot;,
-      &quot;user_id&quot;: &quot;USER01&quot;,
+      &quot;user_id&quot;: &quot;USER02&quot;,
       &quot;message&quot;: &quot;message-002&quot;,
-      &quot;manual_fee&quot;: 50,
+      &quot;manual_fee&quot;: 50
+    },
+    {
+      &quot;order_id&quot;: &quot;888888_3&quot;,
+      &quot;address&quot;: &quot;0x9638fa816ccd35389a9a98a997ee08b5321f3eb9&quot;,
+      &quot;amount&quot;: &quot;0.0002&quot;,
+      &quot;memo&quot;: &quot;memo-003&quot;,
+      &quot;user_id&quot;: &quot;USER03&quot;,
+      &quot;message&quot;: &quot;message-003&quot;
     }
   ]
 }</code></pre></div>
@@ -845,7 +857,7 @@ kbd {
 <tr>
 <td style="text-align: left">order_id</td>
 <td style="text-align: left">string</td>
-<td style="text-align: left">Specify an unique ID</td>
+<td style="text-align: left">Specify an unique ID, order ID must be prefixed</td>
 </tr>
 <tr>
 <td style="text-align: left">address</td>
@@ -884,6 +896,12 @@ kbd {
 </tr>
 </tbody>
 </table>
+
+<blockquote>
+<p>The order_id must be prefixed. Find prefix from corresponding wallet detail on web console UI</p>
+
+<p>block_average_fee and manual<em>fee are mutually exclusive configurations  &gt; block_average_fee and manual</em>fee are mutually exclusive configurations</p>
+</blockquote>
 
 <h5 id="toc_33">Response Format</h5>
 
@@ -1776,15 +1794,25 @@ kbd {
 <div><pre><code class="language-none">curl -X POST -H &quot;Content-Type: application/json&quot; -d &#39;{&quot;api_code&quot;:&quot;API-CODE&quot;,&quot;api_secret&quot;:&quot;API-SECRET&quot;}&#39; \
 http://localhost:8889/v1/mock/wallets/{WALLET-ID}/apitoken</code></pre></div>
 
-<h3 id="toc_91">Register mock server URL</h3>
+<h3 id="toc_91">Register mock server callback URL</h3>
 
 <blockquote>
 <p>Operate on web admin console</p>
 </blockquote>
 
-<p>Callback URL</p>
+<p>Notification Callback URL</p>
 
 <div><pre><code class="language-none">http://localhost:8889/v1/mock/wallets/callback</code></pre></div>
+
+<p>Withdrawal Authentication Callback URL</p>
+
+<div><pre><code class="language-none">http://localhost:8889/v1/mock/wallets/withdrawal/callback</code></pre></div>
+
+<blockquote>
+<p>The withdrawal authentication callback URL once set, every withrawal request will callback this URL to get authentication to proceed withdrawal request.</p>
+
+<p>Refer to <em>WithdrawalCallback()</em> function in mock server OuterController.go</p>
+</blockquote>
 
 <h5 id="toc_92"><a href="#table-of-contents">Back to top</a></h5>
 
@@ -1845,7 +1873,7 @@ http://localhost:8889/v1/mock/wallets/{WALLET-ID}/callback/resend</code></pre></
 
 <h3 id="toc_98">Withdraw</h3>
 
-<div><pre><code class="language-none">curl -X POST -H &quot;Content-Type: application/json&quot; -d &#39;{&quot;requests&quot;:[{&quot;order_id&quot;:&quot;1&quot;,&quot;address&quot;:&quot;0x60589A749AAC632e9A830c8aBE042D1899d8Dd15&quot;,&quot;amount&quot;:&quot;0.0001&quot;,&quot;memo&quot;:&quot;memo-001&quot;,&quot;user_id&quot;:&quot;USER01&quot;,&quot;message&quot;:&quot;message-001&quot;},{&quot;order_id&quot;:&quot;2&quot;,&quot;address&quot;:&quot;0xf16B7B8900F0d2f682e0FFe207a553F52B6C7015&quot;,&quot;amount&quot;:&quot;0.0002&quot;,&quot;memo&quot;:&quot;memo-002&quot;,&quot;user_id&quot;:&quot;USER01&quot;,&quot;message&quot;:&quot;message-002&quot;}]}&#39; \
+<div><pre><code class="language-none">curl -X POST -H &quot;Content-Type: application/json&quot; -d &#39;{&quot;requests&quot;:[{&quot;order_id&quot;:&quot;888888_1&quot;,&quot;address&quot;:&quot;0x60589A749AAC632e9A830c8aBE042D1899d8Dd15&quot;,&quot;amount&quot;:&quot;0.0001&quot;,&quot;memo&quot;:&quot;memo-001&quot;,&quot;user_id&quot;:&quot;USER01&quot;,&quot;message&quot;:&quot;message-001&quot;},{&quot;order_id&quot;:&quot;888888_2&quot;,&quot;address&quot;:&quot;0xf16B7B8900F0d2f682e0FFe207a553F52B6C7015&quot;,&quot;amount&quot;:&quot;0.0002&quot;,&quot;memo&quot;:&quot;memo-002&quot;,&quot;user_id&quot;:&quot;USER01&quot;,&quot;message&quot;:&quot;message-002&quot;}]}&#39; \
 http://localhost:8889/v1/mock/wallets/{WALLET-ID}/withdraw</code></pre></div>
 
 <ul>
@@ -1938,7 +1966,7 @@ http://localhost:8889/v1/mock/wallets/{WALLET-ID}/withdraw</code></pre></div>
 <h3 id="toc_107">Verify addresses</h3>
 
 <div><pre><code class="language-none">curl -X POST -H &quot;Content-Type: application/json&quot; -d &#39;{&quot;addresses&quot;:[&quot;0x635B4764D1939DfAcD3a8014726159abC277BecC&quot;,&quot;1CK6KHY6MHgYvmRQ4PAafKYDrg1ejbH1cE&quot;]}&#39; \
-http://localhost:8889/v1/mock/wallets/{WALLET-ID}/addresses</code></pre></div>
+http://localhost:8889/v1/mock/wallets/{WALLET-ID}/addresses/verify</code></pre></div>
 
 <ul>
 <li><a href="#verify-addresses">API definition</a></li>

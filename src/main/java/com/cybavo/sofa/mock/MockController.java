@@ -113,7 +113,41 @@ public class MockController {
 			}
 
 			logger.info(String.format("callback %s", bodyString));
-			return new ResponseEntity<>(new CommonResponse(0L), HttpStatus.OK);
+			return new ResponseEntity<>("OK", HttpStatus.OK);
+		} catch (Exception e) {
+			logger.warning(String.format("callback failed with exception %s", e.toString()));
+			return new ResponseEntity<>(new BaseResponse(e), HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+	}
+
+	@PostMapping("/v1/mock/wallets/withdrawal/callback")
+	public HttpEntity<Object> withdrawalCallback(@RequestHeader("X-CHECKSUM") String checkSum,
+			@RequestBody String bodyString) {
+		try {
+			final ObjectMapper mapper = new ObjectMapper();
+			WithdrawTransaction.Request request = mapper.readValue(bodyString, WithdrawTransaction.Request.class);
+
+			// How to verify:
+			// 1. Try to find corresponding API secret by request.Requests[0].orderID
+			// 2. Calculate checksum then compare to X-CHECKSUM header (refer to sample code
+			// bellow)
+			// 3. If these two checksums match and the request is valid in your system,
+			// reply 200, "OK" otherwise reply 400 to decline the withdrawal
+
+			// sample code to calculate checksum and verify
+			// final MessageDigest digest = MessageDigest.getInstance("SHA-256");
+			// digest.reset();
+			// digest.update(payload.getBytes("utf8"));
+			// final Base64.Encoder encoder = Base64.getUrlEncoder();
+			// final String checksumVerf = encoder.encodeToString(digest.digest());
+
+			// if (!checksumVerf.equals(checkSum)) {
+			// 	logger.info(String.format("callback expect checkSum %s, got %s", checksumVerf, checkSum));
+			// 	throw new Exception("Bad checksum");
+			// }
+
+			logger.info(String.format("Withdraw Callback %s", bodyString));
+			return new ResponseEntity<>("OK", HttpStatus.OK);
 		} catch (Exception e) {
 			logger.warning(String.format("callback failed with exception %s", e.toString()));
 			return new ResponseEntity<>(new BaseResponse(e), HttpStatus.INTERNAL_SERVER_ERROR);
@@ -148,7 +182,7 @@ public class MockController {
 	}
 
 	@GetMapping("/v1/mock/wallets/{walletId}/sender/transactions/{orderId}")
-	public HttpEntity<BaseResponse> getWithdrawTransactionState(@PathVariable("walletId") long walletId, 
+	public HttpEntity<BaseResponse> getWithdrawTransactionState(@PathVariable("walletId") long walletId,
 			@PathVariable("orderId") String orderId) {
 		Api.Response response = apiClient.makeRequest(walletId, "GET",
 				String.format("/v1/sofa/wallets/%d/sender/transactions/%s", walletId, orderId), null, null);
