@@ -129,7 +129,7 @@ public class Api {
             }
 
             con.setConnectTimeout(5000);
-            con.setReadTimeout(5000);
+            con.setReadTimeout(90000);
 
             if (bodyString.length() > 0) {
                 // send post body

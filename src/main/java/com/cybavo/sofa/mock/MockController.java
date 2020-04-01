@@ -71,10 +71,15 @@ public class MockController {
 	}
 
 	@GetMapping("/v1/mock/wallets/{walletId}/addresses")
-	public HttpEntity<BaseResponse> getDepositWalletAddresses(@PathVariable("walletId") long walletId) {
+	public HttpEntity<BaseResponse> getDepositWalletAddresses(@PathVariable("walletId") long walletId,
+			@RequestParam(name = "start_index", defaultValue = "0") Integer startIndex,
+			@RequestParam(name = "request_number", defaultValue = "0") Integer requestNumber) {
 
 		Api.Response response = apiClient.makeRequest(walletId, "GET",
-				String.format("/v1/sofa/wallets/%d/addresses", walletId), null, null);
+				String.format("/v1/sofa/wallets/%d/addresses", walletId),
+				new String[] { String.format("start_index=%d", startIndex),
+						String.format("request_number=%d", requestNumber), },
+				null);
 
 		return new ResponseEntity<BaseResponse>(response.deserialize(GetDepositWalletAddresses.Response.class),
 				response.getStatus());
