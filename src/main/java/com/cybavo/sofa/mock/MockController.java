@@ -20,6 +20,7 @@ import com.cybavo.sofa.api.GetTxAPITokenStatus;
 import com.cybavo.sofa.api.GetWalletBlockInfo;
 import com.cybavo.sofa.api.GetWalletInfo;
 import com.cybavo.sofa.api.GetWithdrawTransactionState;
+import com.cybavo.sofa.api.GetWithdrawalWalletBalance;
 import com.cybavo.sofa.api.SetApiTokenRequest;
 import com.cybavo.sofa.api.VerifyAddresses;
 import com.cybavo.sofa.api.WithdrawTransaction;
@@ -147,8 +148,9 @@ public class MockController {
 			// final String checksumVerf = encoder.encodeToString(digest.digest());
 
 			// if (!checksumVerf.equals(checkSum)) {
-			// 	logger.info(String.format("callback expect checkSum %s, got %s", checksumVerf, checkSum));
-			// 	throw new Exception("Bad checksum");
+			// logger.info(String.format("callback expect checkSum %s, got %s",
+			// checksumVerf, checkSum));
+			// throw new Exception("Bad checksum");
 			// }
 
 			logger.info(String.format("Withdraw Callback %s", bodyString));
@@ -193,6 +195,15 @@ public class MockController {
 				String.format("/v1/sofa/wallets/%d/sender/transactions/%s", walletId, orderId), null, null);
 
 		return new ResponseEntity<BaseResponse>(response.deserialize(GetWithdrawTransactionState.Response.class),
+				response.getStatus());
+	}
+
+	@GetMapping("/v1/mock/wallets/{walletId}/sender/balance")
+	public HttpEntity<BaseResponse> getWithdrawalWalletBalance(@PathVariable("walletId") long walletId) {
+		Api.Response response = apiClient.makeRequest(walletId, "GET",
+				String.format("/v1/sofa/wallets/%d/sender/balance", walletId), null, null);
+
+		return new ResponseEntity<BaseResponse>(response.deserialize(GetWithdrawalWalletBalance.Response.class),
 				response.getStatus());
 	}
 
