@@ -1,5 +1,6 @@
 package com.cybavo.sofa.api;
 
+import java.util.List;
 import java.util.Map;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -10,6 +11,10 @@ public class WithdrawTransaction {
     public static class Request {
         @JsonProperty("requests")
         Transaction[] requests;
+
+        @JsonProperty("ignore_black_list")
+        @JsonInclude(Include.NON_NULL)
+        Boolean IgnoreBlackList;
 
         public static class Transaction {
             @JsonProperty("order_id")
@@ -43,5 +48,9 @@ public class WithdrawTransaction {
     public static class Response extends BaseResponse {
         @JsonProperty("results")
         Map<String, Long> results;
+
+        @JsonProperty("blacklist")
+        @JsonInclude(Include.NON_NULL)
+        Map<String, List<String>> blacklist;
     }
 }

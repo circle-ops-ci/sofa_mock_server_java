@@ -69,7 +69,7 @@ public class Api {
     }
 
     public Response makeRequest(final Long walletId, final String method, final String api, final String[] params,
-            final Object postBody) {
+            final String postBody) {
         try {
             if (apiServerUrl == null || apiServerUrl.isEmpty()) {
                 throw new Exception("Please config your api.server.url in config/application.properties");
@@ -108,15 +108,11 @@ public class Api {
             final URL url = new URL(path);
             final HttpURLConnection con = (HttpURLConnection) url.openConnection();
 
-            String bodyString = "";
             if (postBody == null) {
                 con.setRequestMethod(method);
             } else {
                 con.setRequestMethod("POST");
-
-                final ObjectMapper mapper = new ObjectMapper();
-                bodyString = mapper.writeValueAsString(postBody);
-                paramList.add(bodyString);
+                paramList.add(postBody);
             }
 
             con.setRequestProperty("X-API-CODE", apiToken.getApiCode());
@@ -131,11 +127,11 @@ public class Api {
             con.setConnectTimeout(5000);
             con.setReadTimeout(90000);
 
-            if (bodyString.length() > 0) {
+            if (postBody != null && postBody.length() > 0) {
                 // send post body
                 con.setDoOutput(true);
                 final OutputStream out = con.getOutputStream();
-                out.write(bodyString.getBytes());
+                out.write(postBody.getBytes());
                 out.flush();
                 out.close();
             } else {

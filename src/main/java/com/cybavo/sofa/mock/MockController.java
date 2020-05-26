@@ -6,23 +6,9 @@ import java.util.Optional;
 import java.util.logging.Logger;
 
 import com.cybavo.sofa.api.BaseResponse;
-import com.cybavo.sofa.api.CallbackResend;
 import com.cybavo.sofa.api.CallbackStruct;
 import com.cybavo.sofa.api.CommonResponse;
-import com.cybavo.sofa.api.CreateReceiveWalletAddresses;
-import com.cybavo.sofa.api.GetDepositWalletAddresses;
-import com.cybavo.sofa.api.GetDepositWalletPoolAddress;
-import com.cybavo.sofa.api.GetInvalidDepositAddresses;
-import com.cybavo.sofa.api.GetNotifications;
-import com.cybavo.sofa.api.GetNotificationsById;
-import com.cybavo.sofa.api.GetTransactionHistory;
-import com.cybavo.sofa.api.GetTxAPITokenStatus;
-import com.cybavo.sofa.api.GetWalletBlockInfo;
-import com.cybavo.sofa.api.GetWalletInfo;
-import com.cybavo.sofa.api.GetWithdrawTransactionState;
-import com.cybavo.sofa.api.GetWithdrawalWalletBalance;
 import com.cybavo.sofa.api.SetApiTokenRequest;
-import com.cybavo.sofa.api.VerifyAddresses;
 import com.cybavo.sofa.api.WithdrawTransaction;
 import com.cybavo.sofa.mock.entity.ApiToken;
 import com.cybavo.sofa.mock.repository.ApiTokenRepository;
@@ -61,18 +47,17 @@ public class MockController {
 	}
 
 	@PostMapping("/v1/mock/wallets/{walletId}/addresses")
-	public HttpEntity<BaseResponse> createDepositWalletAddresses(@PathVariable("walletId") long walletId,
-			@RequestBody CreateReceiveWalletAddresses.Request request) {
+	public HttpEntity<String> createDepositWalletAddresses(@PathVariable("walletId") long walletId,
+			@RequestBody String request) {
 
 		Api.Response response = apiClient.makeRequest(walletId, "POST",
 				String.format("/v1/sofa/wallets/%d/addresses", walletId), null, request);
 
-		return new ResponseEntity<BaseResponse>(response.deserialize(CreateReceiveWalletAddresses.Response.class),
-				response.getStatus());
+		return new ResponseEntity<String>(response.getContent(), response.getStatus());
 	}
 
 	@GetMapping("/v1/mock/wallets/{walletId}/addresses")
-	public HttpEntity<BaseResponse> getDepositWalletAddresses(@PathVariable("walletId") long walletId,
+	public HttpEntity<String> getDepositWalletAddresses(@PathVariable("walletId") long walletId,
 			@RequestParam(name = "start_index", defaultValue = "0") Integer startIndex,
 			@RequestParam(name = "request_number", defaultValue = "0") Integer requestNumber) {
 
@@ -82,18 +67,16 @@ public class MockController {
 						String.format("request_number=%d", requestNumber), },
 				null);
 
-		return new ResponseEntity<BaseResponse>(response.deserialize(GetDepositWalletAddresses.Response.class),
-				response.getStatus());
+		return new ResponseEntity<String>(response.getContent(), response.getStatus());
 	}
 
 	@GetMapping("/v1/mock/wallets/{walletId}/pooladdress")
-	public HttpEntity<BaseResponse> getDepositWalletPoolAddresses(@PathVariable("walletId") long walletId) {
+	public HttpEntity<String> getDepositWalletPoolAddresses(@PathVariable("walletId") long walletId) {
 
 		Api.Response response = apiClient.makeRequest(walletId, "GET",
 				String.format("/v1/sofa/wallets/%d/pooladdress", walletId), null, null);
 
-		return new ResponseEntity<BaseResponse>(response.deserialize(GetDepositWalletPoolAddress.Response.class),
-				response.getStatus());
+		return new ResponseEntity<String>(response.getContent(), response.getStatus());
 	}
 
 	@PostMapping("/v1/mock/wallets/callback")
@@ -162,14 +145,13 @@ public class MockController {
 	}
 
 	@PostMapping("/v1/mock/wallets/{walletId}/callback/resend")
-	public HttpEntity<BaseResponse> callbackResend(@PathVariable("walletId") long walletId,
-			@RequestBody CallbackResend.Request request) {
+	public HttpEntity<String> callbackResend(@PathVariable("walletId") long walletId,
+			@RequestBody String request) {
 		try {
 			Api.Response response = apiClient.makeRequest(walletId, "POST",
 					String.format("/v1/sofa/wallets/%d/collection/notifications/manual", walletId), null, request);
 
-			return new ResponseEntity<BaseResponse>(response.deserialize(CallbackResend.Response.class),
-					response.getStatus());
+			return new ResponseEntity<String>(response.getContent(), response.getStatus());
 
 		} catch (Exception e) {
 			logger.warning(String.format("callbackResend of wallet %d failed %s", walletId, e.toString()));
@@ -178,46 +160,51 @@ public class MockController {
 	}
 
 	@PostMapping("/v1/mock/wallets/{walletId}/withdraw")
-	public HttpEntity<BaseResponse> withdrawTransactions(@PathVariable("walletId") long walletId,
-			@RequestBody WithdrawTransaction.Request request) {
+	public HttpEntity<String> withdrawTransactions(@PathVariable("walletId") long walletId,
+			@RequestBody String request) {
 
 		Api.Response response = apiClient.makeRequest(walletId, "POST",
 				String.format("/v1/sofa/wallets/%d/sender/transactions", walletId), null, request);
 
-		return new ResponseEntity<BaseResponse>(response.deserialize(WithdrawTransaction.Response.class),
-				response.getStatus());
+		return new ResponseEntity<String>(response.getContent(), response.getStatus());
+	}
+
+	@PostMapping("/v1/mock/wallets/{walletId}/sender/transactions/{orderId}/cancel")
+	public HttpEntity<String> cancelWithdrawTransactions(@PathVariable("walletId") long walletId,
+			@PathVariable("orderId") String orderId, @RequestBody String request) {
+		Api.Response response = apiClient.makeRequest(walletId, "POST",
+				String.format("/v1/sofa/wallets/%d/sender/transactions/%s/cancel", walletId, orderId), null, null);
+
+		return new ResponseEntity<String>(response.getContent(), response.getStatus());
 	}
 
 	@GetMapping("/v1/mock/wallets/{walletId}/sender/transactions/{orderId}")
-	public HttpEntity<BaseResponse> getWithdrawTransactionState(@PathVariable("walletId") long walletId,
+	public HttpEntity<String> getWithdrawTransactionState(@PathVariable("walletId") long walletId,
 			@PathVariable("orderId") String orderId) {
 		Api.Response response = apiClient.makeRequest(walletId, "GET",
 				String.format("/v1/sofa/wallets/%d/sender/transactions/%s", walletId, orderId), null, null);
 
-		return new ResponseEntity<BaseResponse>(response.deserialize(GetWithdrawTransactionState.Response.class),
-				response.getStatus());
+		return new ResponseEntity<String>(response.getContent(), response.getStatus());
 	}
 
 	@GetMapping("/v1/mock/wallets/{walletId}/sender/balance")
-	public HttpEntity<BaseResponse> getWithdrawalWalletBalance(@PathVariable("walletId") long walletId) {
+	public HttpEntity<String> getWithdrawalWalletBalance(@PathVariable("walletId") long walletId) {
 		Api.Response response = apiClient.makeRequest(walletId, "GET",
 				String.format("/v1/sofa/wallets/%d/sender/balance", walletId), null, null);
 
-		return new ResponseEntity<BaseResponse>(response.deserialize(GetWithdrawalWalletBalance.Response.class),
-				response.getStatus());
+		return new ResponseEntity<String>(response.getContent(), response.getStatus());
 	}
 
 	@GetMapping("/v1/mock/wallets/{walletId}/apisecret")
-	public HttpEntity<BaseResponse> getTxAPITokenStatus(@PathVariable("walletId") long walletId) {
+	public HttpEntity<String> getTxAPITokenStatus(@PathVariable("walletId") long walletId) {
 		Api.Response response = apiClient.makeRequest(walletId, "GET",
 				String.format("/v1/sofa/wallets/%d/apisecret", walletId), null, null);
 
-		return new ResponseEntity<BaseResponse>(response.deserialize(GetTxAPITokenStatus.Response.class),
-				response.getStatus());
+		return new ResponseEntity<String>(response.getContent(), response.getStatus());
 	}
 
 	@GetMapping("/v1/mock/wallets/{walletId}/notifications")
-	public HttpEntity<BaseResponse> getNotifications(@PathVariable("walletId") Long walletId,
+	public HttpEntity<String> getNotifications(@PathVariable("walletId") Long walletId,
 			@RequestParam("from_time") Long fromTime, @RequestParam("to_time") Long toTime,
 			@RequestParam("type") Integer type) {
 
@@ -227,23 +214,41 @@ public class MockController {
 						String.format("type=%d", type) },
 				null);
 
-		return new ResponseEntity<BaseResponse>(response.deserialize(GetNotifications.Response.class),
-				response.getStatus());
+		return new ResponseEntity<String>(response.getContent(), response.getStatus());
 	}
 
 	@PostMapping("/v1/mock/wallets/{walletId}/notifications/get_by_id")
-	public HttpEntity<BaseResponse> getNotificationsById(@PathVariable("walletId") Long walletId,
-			@RequestBody GetNotificationsById.Request request) {
+	public HttpEntity<String> getNotificationsById(@PathVariable("walletId") Long walletId,
+			@RequestBody String request) {
 
 		Api.Response response = apiClient.makeRequest(walletId, "POST",
 				String.format("/v1/sofa/wallets/%d/notifications/get_by_id", walletId), null, request);
 
-		return new ResponseEntity<BaseResponse>(response.deserialize(GetNotificationsById.Response.class),
-				response.getStatus());
+		return new ResponseEntity<String>(response.getContent(), response.getStatus());
+	}
+
+	@GetMapping("/v1/mock/wallets/{walletId}/receiver/notifications/txid/{txId}/{voutIndex}")
+	public HttpEntity<String> getDepositCallback(@PathVariable("walletId") Long walletId,
+			@PathVariable("txId") String txId, @PathVariable("voutIndex") Integer voutIndex) {
+
+		Api.Response response = apiClient.makeRequest(walletId, "GET",
+				String.format("/v1/sofa/wallets/%d/receiver/notifications/txid/%s/%d", walletId, txId, voutIndex), null, null);
+
+		return new ResponseEntity<String>(response.getContent(), response.getStatus());
+	}
+
+	@GetMapping("/v1/mock/wallets/{walletId}/sender/notifications/order_id/{orderId}")
+	public HttpEntity<String> getWithdrawalCallback(@PathVariable("walletId") Long walletId,
+			@PathVariable("orderId") String orderId) {
+
+		Api.Response response = apiClient.makeRequest(walletId, "GET",
+				String.format("/v1/sofa/wallets/%d/sender/notifications/order_id/%s", walletId, orderId), null, null);
+
+		return new ResponseEntity<String>(response.getContent(), response.getStatus());
 	}
 
 	@GetMapping("/v1/mock/wallets/{walletId}/transactions")
-	public HttpEntity<BaseResponse> getTransactionHistory(@PathVariable("walletId") long walletId,
+	public HttpEntity<String> getTransactionHistory(@PathVariable("walletId") long walletId,
 			@RequestParam("from_time") Long fromTime, @RequestParam("to_time") Long toTime,
 			@RequestParam(name = "start_index", defaultValue = "0") Integer startIndex,
 			@RequestParam(name = "request_number", defaultValue = "0") Integer requestNumber,
@@ -256,48 +261,53 @@ public class MockController {
 						String.format("state=%d", state) },
 				null);
 
-		return new ResponseEntity<BaseResponse>(response.deserialize(GetTransactionHistory.Response.class),
-				response.getStatus());
+		return new ResponseEntity<String>(response.getContent(), response.getStatus());
 	}
 
 	@GetMapping("/v1/mock/wallets/{walletId}/blocks")
-	public HttpEntity<BaseResponse> getWalletBlockInfo(@PathVariable("walletId") long walletId) {
+	public HttpEntity<String> getWalletBlockInfo(@PathVariable("walletId") long walletId) {
 
 		Api.Response response = apiClient.makeRequest(walletId, "GET",
 				String.format("/v1/sofa/wallets/%d/blocks", walletId), null, null);
 
-		return new ResponseEntity<BaseResponse>(response.deserialize(GetWalletBlockInfo.Response.class),
-				response.getStatus());
+		return new ResponseEntity<String>(response.getContent(), response.getStatus());
 	}
 
 	@GetMapping("/v1/mock/wallets/{walletId}/addresses/invalid-deposit")
-	public HttpEntity<BaseResponse> getInvalidDepositAddresses(@PathVariable("walletId") long walletId) {
+	public HttpEntity<String> getInvalidDepositAddresses(@PathVariable("walletId") long walletId) {
 
 		Api.Response response = apiClient.makeRequest(walletId, "GET",
 				String.format("/v1/sofa/wallets/%d/addresses/invalid-deposit", walletId), null, null);
 
-		return new ResponseEntity<BaseResponse>(response.deserialize(GetInvalidDepositAddresses.Response.class),
-				response.getStatus());
+		return new ResponseEntity<String>(response.getContent(), response.getStatus());
 	}
 
 	@GetMapping("/v1/mock/wallets/{walletId}/info")
-	public HttpEntity<BaseResponse> getWalletInfo(@PathVariable("walletId") long walletId) {
+	public HttpEntity<String> getWalletInfo(@PathVariable("walletId") long walletId) {
 
 		Api.Response response = apiClient.makeRequest(walletId, "GET",
 				String.format("/v1/sofa/wallets/%d/info", walletId), null, null);
 
-		return new ResponseEntity<BaseResponse>(response.deserialize(GetWalletInfo.Response.class),
-				response.getStatus());
+		return new ResponseEntity<String>(response.getContent(), response.getStatus());
 	}
 
 	@PostMapping("/v1/mock/wallets/{walletId}/addresses/verify")
-	public HttpEntity<BaseResponse> verifyAddresses(@PathVariable("walletId") long walletId,
-			@RequestBody VerifyAddresses.Request request) {
+	public HttpEntity<String> verifyAddresses(@PathVariable("walletId") long walletId,
+			@RequestBody String request) {
 
 		Api.Response response = apiClient.makeRequest(walletId, "POST",
 				String.format("/v1/sofa/wallets/%d/addresses/verify", walletId), null, request);
 
-		return new ResponseEntity<BaseResponse>(response.deserialize(VerifyAddresses.Response.class),
-				response.getStatus());
+		return new ResponseEntity<String>(response.getContent(), response.getStatus());
+	}
+
+	@PostMapping("/v1/mock/wallets/{walletId}/autofee")
+	public HttpEntity<String> getAutoFee(@PathVariable("walletId") long walletId,
+			@RequestBody String request) {
+
+		Api.Response response = apiClient.makeRequest(walletId, "POST",
+				String.format("/v1/sofa/wallets/%d/autofee", walletId), null, request);
+
+		return new ResponseEntity<String>(response.getContent(), response.getStatus());
 	}
 }
