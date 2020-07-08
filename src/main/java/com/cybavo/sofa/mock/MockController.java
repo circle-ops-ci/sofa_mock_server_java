@@ -86,7 +86,7 @@ public class MockController {
 			final ObjectMapper mapper = new ObjectMapper();
 			CallbackStruct request = mapper.readValue(bodyString, CallbackStruct.class);
 
-			Optional<ApiToken> optApiToken = repository.findById(request.getWalletId());
+			Optional<ApiToken> optApiToken = repository.findById(request.walletId);
 			String payload = bodyString + optApiToken.get().getApiSecret();
 
 			// Generate check sum
@@ -102,6 +102,60 @@ public class MockController {
 			}
 
 			logger.info(String.format("callback %s", bodyString));
+
+			// Callback Type
+			// DepositCallback  = 1
+			// WithdrawCallback = 2
+			// CollectCallback  = 3
+			// AirdropCallback  = 4
+			
+			// Processing State
+			// ProcessingStateInPool  = 0
+			// ProcessingStateInChain = 1
+			// ProcessingStateDone    = 2
+			
+			// Callback State
+			// CallbackStateInit            = 0
+			// CallbackStateHolding         = 1
+			// CallbackStateInPool          = 2
+			// CallbackStateInChain         = 3
+			// CallbackStateDone            = 4
+			// CallbackStateFailed          = 5
+			// CallbackStateResended        = 6
+			// CallbackStateRiskControl     = 7
+			// CallbackStateCancelled       = 8
+			// CallbackStateUTXOUnavailable = 9
+			// CallbackStateDropped         = 10
+			// CallbackStateInChainFailed   = 11
+			// CallbackStatePaused          = 12
+			if (request.type == 1) { // DepositCallback
+				//
+				// deposit unique ID
+				String uniqueID = String.format("%s_%d", request.txId, request.vOutIndex);
+				//
+				if (request.processingState == 2) { // ProcessingStateDone
+					// deposit succeeded, use the deposit unique ID to update your business logic
+				}
+			} else if (request.type == 2) { // WithdrawCallback
+				//
+				// withdrawal unique ID
+				String uniqueID = request.orderID;
+				//
+				if (request.state == 3 && request.processingState == 2) { // CallbackStateInChain && ProcessingStateDone
+					// withdrawal succeeded, use the withdrawal uniqueID to update your business logic
+				} else if (request.state == 5 || request.state == 11) { // CallbackStateFailed || CallbackStateInChainFailed
+						// withdrawal failed, use the withdrawal unique ID to update your business logic
+				}
+			} else if (request.type == 4) { // AirdropCallback
+				//
+				// airdrop unique ID
+				String uniqueID = String.format("%s_%d", request.txId, request.vOutIndex);
+				//
+				if (request.processingState == 2) { // ProcessingStateDone
+						// airdrop succeeded, use the airdrop unique ID to update your business logic
+				}
+			}
+			// reply 200 OK to confirm the callback has been processed
 			return new ResponseEntity<>("OK", HttpStatus.OK);
 		} catch (Exception e) {
 			logger.warning(String.format("callback failed with exception %s", e.toString()));
@@ -307,6 +361,24 @@ public class MockController {
 
 		Api.Response response = apiClient.makeRequest(walletId, "POST",
 				String.format("/v1/sofa/wallets/%d/autofee", walletId), null, request);
+
+		return new ResponseEntity<String>(response.getContent(), response.getStatus());
+	}
+
+	@GetMapping("/v1/mock/wallets/{walletId}/pooladdress/balance")
+	public HttpEntity<String> getPoolAddressBalance(@PathVariable("walletId") Long walletId) {
+
+		Api.Response response = apiClient.makeRequest(walletId, "GET",
+				String.format("/v1/sofa/wallets/%d/pooladdress/balance", walletId), null, null);
+
+		return new ResponseEntity<String>(response.getContent(), response.getStatus());
+	}
+
+	@PostMapping("/v1/mock/wallets/{walletId}/apisecret/activate")
+	public HttpEntity<String> activateAPIToken(@PathVariable("walletId") Long walletId) {
+
+		Api.Response response = apiClient.makeRequest(walletId, "POST",
+				String.format("/v1/sofa/wallets/%d/apisecret/activate", walletId), null, null);
 
 		return new ResponseEntity<String>(response.getContent(), response.getStatus());
 	}

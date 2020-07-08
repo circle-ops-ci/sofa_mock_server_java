@@ -3,69 +3,76 @@ package com.cybavo.sofa.api;
 import java.util.Map;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class CallbackStruct {
     @JsonProperty("type")
-    Integer type;
+    public Integer type;
 
     @JsonProperty("serial")
-    Long serial;
+    public Long serial;
 
     @JsonProperty("order_id")
-    String orderID;
+    public String orderID;
 
     @JsonProperty("currency")
-    String currency;
+    public String currency;
 
     @JsonProperty("txid")
-    String txId;
+    public String txId;
 
     @JsonProperty("block_height")
-    Long blockHeight;
+    public Long blockHeight;
 
     @JsonProperty("tindex")
-    Integer tIndex;
+    public Integer tIndex;
 
     @JsonProperty("vout_index")
-    Integer vOutIndex;
+    public Integer vOutIndex;
 
     @JsonProperty("amount")
-    String amount;
+    public String amount;
 
     @JsonProperty("fees")
-    String fees;
+    public String fees;
 
     @JsonProperty("memo")
-    String memo;
+    public String memo;
 
     @JsonProperty("broadcast_at")
-    Long broadcastAt;
+    public Long broadcastAt;
 
     @JsonProperty("chain_at")
-    Long chainAt;
+    public Long chainAt;
 
     @JsonProperty("from_address")
-    String fromAddress;
+    public String fromAddress;
 
     @JsonProperty("to_address")
-    String toAddress;
+    public String toAddress;
 
     @JsonProperty("wallet_id")
-    Long walletId;
+    public Long walletId;
 
     @JsonProperty("state")
-    Long state;
+    public Long state;
 
     @JsonProperty("confirm_blocks")
-    Long confirmBlocks;
+    public Long confirmBlocks;
 
     @JsonProperty("processing_state")
-    Short ProcessingState;
+    public Short processingState;
+
+    @JsonProperty("decimal")
+    public Long decimal;
+
+    @JsonProperty("currency_bip44")
+    public Integer currencyBip44;
+
+    @JsonProperty("token_address")
+    public String tokenAddress;
 
     @JsonProperty("addon")
-    Map<String, Object> addon;
-
-    public Long getWalletId() {
-        return walletId;
-    }
+    public Map<String, Object> addon;
 }
