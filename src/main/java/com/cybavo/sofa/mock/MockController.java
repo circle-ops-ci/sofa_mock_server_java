@@ -382,4 +382,13 @@ public class MockController {
 
 		return new ResponseEntity<String>(response.getContent(), response.getStatus());
 	}
+
+	@GetMapping("/v1/mock/wallets/{walletId}/receiver/balance")
+	public HttpEntity<String> getDepositWalletBalance(@PathVariable("walletId") long walletId) {
+
+		Api.Response response = apiClient.makeRequest(walletId, "GET",
+				String.format("/v1/sofa/wallets/%d/receiver/balance", walletId), null, null);
+
+		return new ResponseEntity<String>(response.getContent(), response.getStatus());
+	}
 }
