@@ -241,6 +241,15 @@ public class MockController {
 		return new ResponseEntity<String>(response.getContent(), response.getStatus());
 	}
 
+	@GetMapping("/v1/mock/wallets/{walletId}/sender/transactions/{orderId}/all")
+	public HttpEntity<String> getWithdrawTransactionStateAll(@PathVariable("walletId") long walletId,
+			@PathVariable("orderId") String orderId) {
+		Api.Response response = apiClient.makeRequest(walletId, "GET",
+				String.format("/v1/sofa/wallets/%d/sender/transactions/%s/all", walletId, orderId), null, null);
+
+		return new ResponseEntity<String>(response.getContent(), response.getStatus());
+	}
+
 	@GetMapping("/v1/mock/wallets/{walletId}/sender/balance")
 	public HttpEntity<String> getWithdrawalWalletBalance(@PathVariable("walletId") long walletId) {
 		Api.Response response = apiClient.makeRequest(walletId, "GET",
