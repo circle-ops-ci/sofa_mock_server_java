@@ -409,4 +409,15 @@ public class MockController {
 
 		return new ResponseEntity<String>(response.getContent(), response.getStatus());
 	}
+
+	@GetMapping("/v1/mock/wallets/{walletId}/addresses/contract_txid")
+	public HttpEntity<String> getDeployedContractCollectionAddresses(@PathVariable("walletId") long walletId,
+			@RequestParam("txids") String txids) {
+
+		Api.Response response = apiClient.makeRequest(walletId, "GET",
+				String.format("/v1/sofa/wallets/%d/addresses/contract_txid", walletId),
+				new String[] { String.format("txids=%s", txids) }, null);
+
+		return new ResponseEntity<String>(response.getContent(), response.getStatus());
+	}
 }
