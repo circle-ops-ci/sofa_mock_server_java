@@ -198,8 +198,8 @@ public class MockController {
 		}
 	}
 
-	@PostMapping("/v1/mock/wallets/{walletId}/callback/resend")
-	public HttpEntity<String> callbackResend(@PathVariable("walletId") long walletId,
+	@PostMapping("/v1/mock/wallets/{walletId}/collection/notifications/manual")
+	public HttpEntity<String> resendDepositCollectionCallbacks(@PathVariable("walletId") long walletId,
 			@RequestBody String request) {
 		try {
 			Api.Response response = apiClient.makeRequest(walletId, "POST",
@@ -208,12 +208,12 @@ public class MockController {
 			return new ResponseEntity<String>(response.getContent(), response.getStatus());
 
 		} catch (Exception e) {
-			logger.warning(String.format("callbackResend of wallet %d failed %s", walletId, e.toString()));
+			logger.warning(String.format("resendDepositCollectionCallbacks of wallet %d failed %s", walletId, e.toString()));
 			return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
 
-	@PostMapping("/v1/mock/wallets/{walletId}/withdraw")
+	@PostMapping("/v1/mock/wallets/{walletId}/sender/transactions")
 	public HttpEntity<String> withdrawTransactions(@PathVariable("walletId") long walletId,
 			@RequestBody String request) {
 
@@ -423,11 +423,26 @@ public class MockController {
 	
 	@PostMapping("/v1/mock/wallets/{walletId}/sender/transactions/acl")
 	public HttpEntity<String> setWithdrawalACL(@PathVariable("walletId") Long walletId,
-				@RequestBody String request) {
-	
+			@RequestBody String request) {
+
 		Api.Response response = apiClient.makeRequest(walletId, "POST",
 				String.format("/v1/sofa/wallets/%d/sender/transactions/acl", walletId), null, request);
-	
+
 		return new ResponseEntity<String>(response.getContent(), response.getStatus());
+	}
+	
+	@PostMapping("/v1/mock/wallets/{walletId}/sender/notifications/manual")
+	public HttpEntity<String> resendWithdrawalCallbacks(@PathVariable("walletId") long walletId,
+			@RequestBody String request) {
+		try {
+			Api.Response response = apiClient.makeRequest(walletId, "POST",
+					String.format("/v1/sofa/wallets/%d/sender/notifications/manual", walletId), null, request);
+
+			return new ResponseEntity<String>(response.getContent(), response.getStatus());
+
+		} catch (Exception e) {
+			logger.warning(String.format("resendWithdrawalCallbacks of wallet %d failed %s", walletId, e.toString()));
+			return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+		}
 	}
 }
