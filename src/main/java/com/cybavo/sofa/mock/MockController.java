@@ -445,4 +445,14 @@ public class MockController {
 			return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
+
+	@PostMapping("/v1/mock/wallets/{walletId}/refreshsecret")
+	public HttpEntity<String> refreshSecret(@PathVariable("walletId") long walletId,
+			@RequestBody String request) {
+
+		Api.Response response = apiClient.makeRequest(walletId, "POST",
+				String.format("/v1/sofa/wallets/%d/refreshsecret", walletId), null, request);
+
+		return new ResponseEntity<String>(response.getContent(), response.getStatus());
+	}
 }
