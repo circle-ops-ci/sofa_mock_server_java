@@ -25,6 +25,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.DeleteMapping;
 
 @RestController
 public class MockController {
@@ -452,6 +453,54 @@ public class MockController {
 
 		Api.Response response = apiClient.makeRequest(walletId, "POST",
 				String.format("/v1/sofa/wallets/%d/refreshsecret", walletId), null, request);
+
+		return new ResponseEntity<String>(response.getContent(), response.getStatus());
+	}
+
+	@GetMapping("/v1/mock/wallets/{walletId}/sender/whitelist")
+	public HttpEntity<String> getSenderWhitelist(@PathVariable("walletId") long walletId) {
+
+		Api.Response response = apiClient.makeRequest(walletId, "GET",
+				String.format("/v1/sofa/wallets/%d/sender/whitelist", walletId), null, null);
+
+		return new ResponseEntity<String>(response.getContent(), response.getStatus());
+	}
+
+	@PostMapping("/v1/mock/wallets/{walletId}/sender/whitelist")
+	public HttpEntity<String> addSenderWhitelist(@PathVariable("walletId") long walletId,
+			@RequestBody String request) {
+
+		Api.Response response = apiClient.makeRequest(walletId, "POST",
+				String.format("/v1/sofa/wallets/%d/sender/whitelist", walletId), null, request);
+
+		return new ResponseEntity<String>(response.getContent(), response.getStatus());
+	}
+
+	@DeleteMapping("/v1/mock/wallets/{walletId}/sender/whitelist")
+	public HttpEntity<String> removeSenderWhitelist(@PathVariable("walletId") long walletId,
+			@RequestBody String request) {
+
+		Api.Response response = apiClient.makeRequest(walletId, "DELETE",
+				String.format("/v1/sofa/wallets/%d/sender/whitelist", walletId), null, request);
+
+		return new ResponseEntity<String>(response.getContent(), response.getStatus());
+	}
+
+	@GetMapping("/v1/mock/wallets/{walletId}/sender/whitelist/config")
+	public HttpEntity<String> querySenderWhitelistConfig(@PathVariable("walletId") long walletId) {
+
+		Api.Response response = apiClient.makeRequest(walletId, "GET",
+				String.format("/v1/sofa/wallets/%d/sender/whitelist/config", walletId), null, null);
+
+		return new ResponseEntity<String>(response.getContent(), response.getStatus());
+	}
+
+	@PostMapping("/v1/mock/wallets/{walletId}/sender/whitelist/check")
+	public HttpEntity<String> checkSenderWhitelist(@PathVariable("walletId") long walletId,
+			@RequestBody String request) {
+
+		Api.Response response = apiClient.makeRequest(walletId, "POST",
+				String.format("/v1/sofa/wallets/%d/sender/whitelist/check", walletId), null, request);
 
 		return new ResponseEntity<String>(response.getContent(), response.getStatus());
 	}

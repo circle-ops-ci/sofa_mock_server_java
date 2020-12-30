@@ -108,10 +108,8 @@ public class Api {
             final URL url = new URL(path);
             final HttpURLConnection con = (HttpURLConnection) url.openConnection();
 
-            if (postBody == null) {
-                con.setRequestMethod(method);
-            } else {
-                con.setRequestMethod("POST");
+            con.setRequestMethod(method);
+            if (postBody != null) {
                 paramList.add(postBody);
             }
 
