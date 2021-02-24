@@ -387,8 +387,13 @@ public class MockController {
 	@PostMapping("/v1/mock/wallets/{walletId}/apisecret/activate")
 	public HttpEntity<String> activateAPIToken(@PathVariable("walletId") Long walletId) {
 
-		Api.Response response = apiClient.makeRequest(walletId, "POST",
-				String.format("/v1/sofa/wallets/%d/apisecret/activate", walletId), null, null);
+		String url;
+		if (walletId == 0) {
+			url = "/v1/sofa/wallets/readonly/apisecret/activate";
+		} else {
+			url = String.format("/v1/sofa/wallets/%d/apisecret/activate", walletId);
+		}
+		Api.Response response = apiClient.makeRequest(walletId, "POST", url, null, null);
 
 		return new ResponseEntity<String>(response.getContent(), response.getStatus());
 	}
@@ -501,6 +506,35 @@ public class MockController {
 
 		Api.Response response = apiClient.makeRequest(walletId, "POST",
 				String.format("/v1/sofa/wallets/%d/sender/whitelist/check", walletId), null, request);
+
+		return new ResponseEntity<String>(response.getContent(), response.getStatus());
+	}
+
+	@PostMapping("/v1/mock/wallets/{walletId}/addresses/label")
+	public HttpEntity<String> updateDepositWalletAddressLabel(@PathVariable("walletId") long walletId,
+			@RequestBody String request) {
+
+		Api.Response response = apiClient.makeRequest(walletId, "POST",
+				String.format("/v1/sofa/wallets/%d/addresses/label", walletId), null, request);
+
+		return new ResponseEntity<String>(response.getContent(), response.getStatus());
+	}
+
+	@PostMapping("/v1/mock/wallets/{walletId}/addresses/get_labels")
+	public HttpEntity<String> getDepositWalletAddressesLabel(@PathVariable("walletId") long walletId,
+			@RequestBody String request) {
+
+		Api.Response response = apiClient.makeRequest(walletId, "POST",
+				String.format("/v1/sofa/wallets/%d/addresses/get_labels", walletId), null, request);
+
+		return new ResponseEntity<String>(response.getContent(), response.getStatus());
+	}
+
+	@GetMapping("/v1/mock/wallets/readonly/walletlist")
+	public HttpEntity<String> getReadOnlyWalletList() {
+
+		Api.Response response = apiClient.makeRequest(0L, "GET",
+				"/v1/sofa/wallets/readonly/walletlist", null, null);
 
 		return new ResponseEntity<String>(response.getContent(), response.getStatus());
 	}

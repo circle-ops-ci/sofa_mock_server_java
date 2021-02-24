@@ -76,7 +76,7 @@ public class Api {
             }
 
             ApiToken apiToken = findApiTokenByWalletId(walletId);
-            if (apiToken.getWalletId() <= 0) {
+            if (apiToken.getWalletId() < 0) {
                 return new Response(HttpStatus.BAD_REQUEST, "Missing api token");
             }
             if (method.length() <= 0) {
@@ -178,7 +178,11 @@ public class Api {
     private ApiToken findApiTokenByWalletId(long walletId) throws Exception {
         Optional<ApiToken> optApiToken = repository.findById(walletId);
         if (!optApiToken.isPresent()) {
-            throw new Exception("Missing api token of wallet " + walletId);
+            // try read-only API token
+            optApiToken = repository.findById(0L);
+            if (!optApiToken.isPresent()) {
+                throw new Exception("Missing api token of wallet " + walletId);
+            }
         }
         return optApiToken.get();
     }
