@@ -55,4 +55,13 @@ public class MerchantCallbackStruct {
 
     @JsonProperty("addon")
     public Map<String, Object> addon;
+
+    @JsonProperty("fee")
+    public String fee;
+
+    @JsonProperty("decimal")
+    public Long decimals;
+
+    @JsonProperty("fee_decimal")
+    public Long feeDecimals;
 }
