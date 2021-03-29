@@ -16,15 +16,12 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class CallbackStruct {
-    @JsonProperty("type")
-    public Integer type;
-
-    @JsonProperty("serial")
-    public Long serial;
+public class MerchantCallbackStruct {
+    @JsonProperty("merchant_id")
+    public Long merchantId;
 
     @JsonProperty("order_id")
-    public String orderID;
+    public String orderId;
 
     @JsonProperty("currency")
     public String currency;
@@ -32,29 +29,14 @@ public class CallbackStruct {
     @JsonProperty("txid")
     public String txId;
 
-    @JsonProperty("block_height")
-    public Long blockHeight;
-
-    @JsonProperty("tindex")
-    public Integer tIndex;
-
-    @JsonProperty("vout_index")
-    public Integer vOutIndex;
-
-    @JsonProperty("amount")
-    public String amount;
-
-    @JsonProperty("fees")
-    public String fees;
-
-    @JsonProperty("memo")
-    public String memo;
+    @JsonProperty("recv_amount")
+    public String recvAmount;
 
     @JsonProperty("broadcast_at")
     public Long broadcastAt;
 
-    @JsonProperty("chain_at")
-    public Long chainAt;
+    @JsonProperty("block_height")
+    public Long blockHeight;
 
     @JsonProperty("from_address")
     public String fromAddress;
@@ -62,20 +44,8 @@ public class CallbackStruct {
     @JsonProperty("to_address")
     public String toAddress;
 
-    @JsonProperty("wallet_id")
-    public Long walletId;
-
     @JsonProperty("state")
     public Long state;
-
-    @JsonProperty("confirm_blocks")
-    public Long confirmBlocks;
-
-    @JsonProperty("processing_state")
-    public Short processingState;
-
-    @JsonProperty("decimal")
-    public Long decimal;
 
     @JsonProperty("currency_bip44")
     public Integer currencyBip44;

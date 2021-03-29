@@ -1,3 +1,13 @@
+// Copyright (c) 2018-2021 The CYBAVO developers
+// All Rights Reserved.
+// NOTICE: All information contained herein is, and remains
+// the property of CYBAVO and its suppliers,
+// if any. The intellectual and technical concepts contained
+// herein are proprietary to CYBAVO
+// Dissemination of this information or reproduction of this materia
+// is strictly forbidden unless prior written permission is obtained
+// from CYBAVO.
+
 package com.cybavo.sofa.mock;
 
 import java.io.BufferedReader;
@@ -68,14 +78,14 @@ public class Api {
         return sha256(String.join("&", paramList));
     }
 
-    public Response makeRequest(final Long walletId, final String method, final String api, final String[] params,
+    public Response makeRequest(final Long targetId, final String method, final String api, final String[] params,
             final String postBody) {
         try {
             if (apiServerUrl == null || apiServerUrl.isEmpty()) {
                 throw new Exception("Please config your api.server.url in config/application.properties");
             }
 
-            ApiToken apiToken = findApiTokenByWalletId(walletId);
+            ApiToken apiToken = findApiTokenByWalletId(targetId);
             if (apiToken.getWalletId() < 0) {
                 return new Response(HttpStatus.BAD_REQUEST, "Missing api token");
             }
@@ -175,13 +185,13 @@ public class Api {
         }
     }
 
-    private ApiToken findApiTokenByWalletId(long walletId) throws Exception {
-        Optional<ApiToken> optApiToken = repository.findById(walletId);
+    private ApiToken findApiTokenByWalletId(long targetId) throws Exception {
+        Optional<ApiToken> optApiToken = repository.findById(targetId);
         if (!optApiToken.isPresent()) {
             // try read-only API token
             optApiToken = repository.findById(0L);
             if (!optApiToken.isPresent()) {
-                throw new Exception("Missing api token of wallet " + walletId);
+                throw new Exception("Missing api token of wallet " + targetId);
             }
         }
         return optApiToken.get();
