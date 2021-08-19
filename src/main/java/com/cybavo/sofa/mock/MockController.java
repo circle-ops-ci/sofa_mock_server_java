@@ -126,19 +126,13 @@ public class MockController {
 			// ProcessingStateDone    = 2
 			
 			// Callback State
-			// CallbackStateInit            = 0
 			// CallbackStateHolding         = 1
 			// CallbackStateInPool          = 2
 			// CallbackStateInChain         = 3
-			// CallbackStateDone            = 4
 			// CallbackStateFailed          = 5
-			// CallbackStateResended        = 6
-			// CallbackStateRiskControl     = 7
 			// CallbackStateCancelled       = 8
-			// CallbackStateUTXOUnavailable = 9
 			// CallbackStateDropped         = 10
 			// CallbackStateInChainFailed   = 11
-			// CallbackStatePaused          = 12
 			if (request.type == 1) { // DepositCallback
 				//
 				// deposit unique ID
@@ -554,6 +548,33 @@ public class MockController {
 			@RequestBody String request) {
 		Api.Response response = apiClient.makeRequest(walletId, "POST",
 				String.format("/v1/sofa/wallets/%d/notifications/inspect", walletId), null, request);
+
+		return new ResponseEntity<String>(response.getContent(), response.getStatus());
+	}
+
+	@GetMapping("/v1/mock/wallets/{walletId}/sender/transactions")
+	public HttpEntity<String> getSenderTransactionHistory(@PathVariable("walletId") long walletId,
+			@RequestParam(name = "start_index", defaultValue = "0") Integer startIndex,
+			@RequestParam(name = "request_number", defaultValue = "10") Integer requestNumber,
+			@RequestParam(name = "from_time", defaultValue = "0") Long fromTime,
+			@RequestParam(name = "to_time", defaultValue = "") Long toTime) {
+
+		Api.Response response = apiClient
+				.makeRequest(
+						walletId, "GET", String.format("/v1/sofa/wallets/%d/sender/transactions", walletId), new String[] {
+								String.format("start_index=%d", startIndex), String.format("request_number=%d", requestNumber),
+								String.format("from_time=%d", fromTime), String.format("to_time=%d", toTime),},
+						null);
+
+		return new ResponseEntity<String>(response.getContent(), response.getStatus());
+	}
+	
+	@PostMapping("/v1/mock/wallets/{walletId}/autofees")
+	public HttpEntity<String> getAutoFees(@PathVariable("walletId") long walletId,
+			@RequestBody String request) {
+
+		Api.Response response = apiClient.makeRequest(walletId, "POST",
+				String.format("/v1/sofa/wallets/%d/autofees", walletId), null, request);
 
 		return new ResponseEntity<String>(response.getContent(), response.getStatus());
 	}
