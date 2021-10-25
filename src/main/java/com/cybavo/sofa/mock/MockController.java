@@ -578,4 +578,38 @@ public class MockController {
 
 		return new ResponseEntity<String>(response.getContent(), response.getStatus());
 	}
+
+	@PostMapping("/v1/mock/wallets/{walletId}/signmessage")
+	public HttpEntity<String> signMessage(@PathVariable("walletId") long walletId,
+			@RequestBody String request) {
+
+		Api.Response response = apiClient.makeRequest(walletId, "POST",
+				String.format("/v1/sofa/wallets/%d/signmessage", walletId), null, request);
+
+		return new ResponseEntity<String>(response.getContent(), response.getStatus());
+	}
+
+	@GetMapping("/v1/mock/wallets/{walletId}/contract/read")
+	public HttpEntity<String> callContractRead(@PathVariable("walletId") long walletId,
+			@RequestParam(name = "contract", defaultValue = "") String contract,
+			@RequestParam(name = "data", defaultValue = "") String data) {
+
+		Api.Response response = apiClient.makeRequest(walletId, "GET",
+				String.format("/v1/sofa/wallets/%d/contract/read", walletId),
+				new String[] { String.format("contract=%s", contract), String.format("data=%s", data) }, null);
+
+		return new ResponseEntity<String>(response.getContent(), response.getStatus());
+	}
+	
+	@GetMapping("/v1/mock/wallets/{walletId}/sender/transactions/eventlog")
+	public HttpEntity<String> callContractRead(@PathVariable("walletId") long walletId,
+			@RequestParam(name = "txid", defaultValue = "") String txid) {
+
+		Api.Response response = apiClient.makeRequest(walletId, "GET",
+				String.format("/v1/sofa/wallets/%d/sender/transactions/eventlog", walletId), new String[] {
+					String.format("txid=%s", txid) },
+				null);
+
+		return new ResponseEntity<String>(response.getContent(), response.getStatus());
+	}
 }
