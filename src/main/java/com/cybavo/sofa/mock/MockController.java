@@ -612,4 +612,19 @@ public class MockController {
 
 		return new ResponseEntity<String>(response.getContent(), response.getStatus());
 	}
+
+	@GetMapping("/v1/mock/wallets/readonly/walletlist/balances")
+	public HttpEntity<String> getReadOnlyWalletListBalances(
+		@RequestParam(name = "type", defaultValue = "-1") Integer type,
+		@RequestParam(name = "start_index", defaultValue = "0") Integer startIndex,
+		@RequestParam(name = "request_number", defaultValue = "0") Integer requestNumber) {
+
+		Api.Response response = apiClient.makeRequest(0L, "GET",
+				"/v1/sofa/wallets/readonly/walletlist/balances",
+				new String[] { String.format("type=%d", type),
+					String.format("start_index=%d", startIndex),
+					String.format("request_number=%d", requestNumber),}, null);
+
+		return new ResponseEntity<String>(response.getContent(), response.getStatus());
+	}
 }

@@ -131,6 +131,7 @@ public class Api {
             if (postBody != null) {
                 con.setRequestProperty("Content-Type", "application/json");
             }
+            con.setRequestProperty("User-Agent", "golang");
 
             con.setConnectTimeout(5000);
             con.setReadTimeout(90000);
