@@ -627,4 +627,14 @@ public class MockController {
 
 		return new ResponseEntity<String>(response.getContent(), response.getStatus());
 	}
+
+	@PostMapping("/v1/mock/wallets/{walletId}/receiver/addresses/verify")
+	public HttpEntity<String> verifyDepositAddresses(@PathVariable("walletId") long walletId,
+			@RequestBody String request) {
+
+		Api.Response response = apiClient.makeRequest(walletId, "POST",
+				String.format("/v1/sofa/wallets/%d/receiver/addresses/verify", walletId), null, request);
+
+		return new ResponseEntity<String>(response.getContent(), response.getStatus());
+	}
 }
