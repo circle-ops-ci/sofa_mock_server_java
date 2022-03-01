@@ -1,4 +1,4 @@
-// Copyright (c) 2018-2021 The CYBAVO developers
+// Copyright (c) 2018-2022 The CYBAVO developers
 // All Rights Reserved.
 // NOTICE: All information contained herein is, and remains
 // the property of CYBAVO and its suppliers,
@@ -26,6 +26,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.logging.Logger;
+import java.util.Base64;
 
 import com.cybavo.sofa.api.BaseResponse;
 import com.cybavo.sofa.mock.entity.ApiToken;
@@ -172,6 +173,19 @@ public class Api {
                 logger.warning(String.format("ApiClient.Request, url: %s, status: %d", url, status));
             }
 
+            //
+            // verify checksum of a successful response
+            //
+            String checksum = con.getHeaderField("X-CHECKSUM");
+            String payload = content + apiToken.getApiSecret();
+            final MessageDigest digest = MessageDigest.getInstance("SHA-256");
+            digest.reset();
+            digest.update(payload.getBytes("utf8"));
+            final Base64.Encoder encoder = Base64.getUrlEncoder();
+            final String checksumVerf = encoder.encodeToString(digest.digest());
+            if (!checksumVerf.equals(checksum)) {
+                return new Response(HttpStatus.resolve(400), "mismatched response checksum");
+            }
             return new Response(HttpStatus.resolve(status), content.toString());
         } catch (final Exception e) {
             e.printStackTrace();

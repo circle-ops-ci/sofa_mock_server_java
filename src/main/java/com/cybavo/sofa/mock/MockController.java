@@ -1,4 +1,4 @@
-// Copyright (c) 2018-2021 The CYBAVO developers
+// Copyright (c) 2018-2022 The CYBAVO developers
 // All Rights Reserved.
 // NOTICE: All information contained herein is, and remains
 // the property of CYBAVO and its suppliers,
@@ -634,6 +634,17 @@ public class MockController {
 
 		Api.Response response = apiClient.makeRequest(walletId, "POST",
 				String.format("/v1/sofa/wallets/%d/receiver/addresses/verify", walletId), null, request);
+
+		return new ResponseEntity<String>(response.getContent(), response.getStatus());
+	}
+
+	@GetMapping("/v1/mock/currency/prices")
+	public HttpEntity<String> getCurrencyPrices(
+		@RequestParam(name = "convert", defaultValue = "") String convert) {
+
+		Api.Response response = apiClient.makeRequest(0L, "GET",
+				"/v1/sofa/currency/prices",
+				new String[] { String.format("convert=%s", convert)}, null);
 
 		return new ResponseEntity<String>(response.getContent(), response.getStatus());
 	}
