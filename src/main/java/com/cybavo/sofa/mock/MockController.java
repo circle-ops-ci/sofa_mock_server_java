@@ -658,4 +658,14 @@ public class MockController {
 
 		return new ResponseEntity<String>(response.getContent(), response.getStatus());
 	}
+
+	@PostMapping("/v1/mock/currency/{currency}/contract/get-multiple-tokenuri")
+	public HttpEntity<String> getContractTokenMeta(@PathVariable("currency") long currency,
+			@RequestBody String request) {
+
+		Api.Response response = apiClient.makeRequest(currency, "POST",
+				String.format("/v1/sofa/currency/%d/contract/get-multiple-tokenuri", currency), null, request);
+
+		return new ResponseEntity<String>(response.getContent(), response.getStatus());
+	}
 }
