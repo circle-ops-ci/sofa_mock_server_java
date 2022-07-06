@@ -678,4 +678,15 @@ public class MockController {
 
 		return new ResponseEntity<String>(response.getContent(), response.getStatus());
 	}
+
+	@GetMapping("/v1/mock/healthcheck")
+	public HttpEntity<String> healthCheck(
+		@RequestParam(name = "convert", defaultValue = "") String convert) {
+
+		Api.Response response = apiClient.makeRequest(0L, "GET",
+				"/v1/sofa/healthcheck",
+				null, null);
+
+		return new ResponseEntity<String>(response.getContent(), response.getStatus());
+	}
 }
